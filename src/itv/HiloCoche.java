@@ -11,8 +11,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
- * Clase Hilo Coche
- * 
+ * Clase Hilo Coche Representa un vehículo que acude a la estación de ITV.
+ * Implementa la interfaz Runnable para su ejecución en un hilo independiente.
+ *
  * @author Antonio Naranjo Castillo
  */
 public class HiloCoche implements Runnable {
@@ -22,32 +23,11 @@ public class HiloCoche implements Runnable {
     private static final int PUERTO = 12349;
     private String nombreVehiculo;
     private String codigoTurno;
-    
+
     // Declaración/iniciación de las variables que almacenan el número de pruebas superadas y no superadas
-    private static int pruebasSuperadas=0;
-    private static int pruebasNoSuperadas=0;
+    private static int pruebasSuperadas = 0;
+    private static int pruebasNoSuperadas = 0;
 
-    // Métodos que recuentan las pruebas superadas
-    public synchronized void incrementarPruebasSuperadas() {
-        pruebasSuperadas++;
-    }
-    
-    // Métodos que recuentan las pruebas no superadas
-    public synchronized void incrementarPruebasNoSuperadas() {
-        pruebasNoSuperadas++;
-    }
-
-    // Método getter que devuelven el número de pruebas superadas
-    public static int getPruebasSuperadas() {
-        return pruebasSuperadas;
-    }
-    
-    // Método getter que devuelven el número de pruebas no superadas
-    public static int getPruebasNoSuperadas() {
-        return pruebasNoSuperadas;
-    }
-    
-    
     private static final String[] frasesInadecuadas = {
         "ok jefe",
         "lo que tú digas",
@@ -59,6 +39,7 @@ public class HiloCoche implements Runnable {
         "perfecto máquina",
         "de lujo"
     };
+
     private static final String[] frasesCorrectas = {
         "vale",
         "recibido",
@@ -74,7 +55,27 @@ public class HiloCoche implements Runnable {
     // Método constructor del HiloCoche (HiloCliente) El nombre será asignado a posteriori por parte del servidor principal
     public HiloCoche() {
         this.nombreVehiculo = null;
-        this.codigoTurno=null;
+        this.codigoTurno = null;
+    }
+
+    // Métodos que recuentan las pruebas superadas
+    public synchronized void incrementarPruebasSuperadas() {
+        pruebasSuperadas++;
+    }
+
+    // Métodos que recuentan las pruebas no superadas
+    public synchronized void incrementarPruebasNoSuperadas() {
+        pruebasNoSuperadas++;
+    }
+
+    // Método getter que devuelven el número de pruebas superadas
+    public static int getPruebasSuperadas() {
+        return pruebasSuperadas;
+    }
+
+    // Método getter que devuelven el número de pruebas no superadas
+    public static int getPruebasNoSuperadas() {
+        return pruebasNoSuperadas;
     }
 
     // Método selector de frase aleatoria
@@ -91,7 +92,7 @@ public class HiloCoche implements Runnable {
         }
     }
 
-    // Método run del HiloCoche
+    // Método run del HiloCoche donde se implementa su lógica
     @Override
     public void run() {
 
@@ -108,7 +109,7 @@ public class HiloCoche implements Runnable {
 
 //RECIBIDO 1: Se recibe mensaje del hilo inspector
             // El vehículo recibe su nuevo nombre
-            this.nombreVehiculo=br.readLine();
+            this.nombreVehiculo = br.readLine();
 //RECIBIDO 2: Se recibe mensaje del hilo inspector
             this.codigoTurno=br.readLine();
             //System.out.println(String.format("Mi nuevo nombre es: %s y tiene asignado el turno nº %s", this.nombreVehiculo,this.codigoTurno));
@@ -125,7 +126,7 @@ public class HiloCoche implements Runnable {
             for (int i = 0; i < numeroPruebas; i++) {
 //RECIBIDO 5: Se recibe mensaje del hilo inspector          
                 // El hilo coche recibe la petición de cada prueba
-                mensajeIn=br.readLine();
+                mensajeIn = br.readLine();
                 //System.out.println(mensajeIn);
                 // El hilo coche responde al inspector con una frase pudiendo ser de las correctas o de las inadecuadas en función de una probabilidad del 70% a favor de las frases correctas
                 probabilidad = (int) (Math.random() * 100);

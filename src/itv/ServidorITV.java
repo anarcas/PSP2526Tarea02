@@ -9,8 +9,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Clase ServidorITV (Servidor principal de la estación ITV)
- * 
+ * Clase principal que gestiona el servidor de la estación ITV. Se encarga de
+ * inicializar el recurso compartido, lanzar los hilos inspectores y escuchar
+ * conexiones entrantes de vehículos de forma ininterrumpida.
+ *
  * @author Antonio Naranjo Castillo
  */
 public class ServidorITV {
@@ -18,6 +20,9 @@ public class ServidorITV {
     private static final int PUERTO = 12349;
 
     /**
+     * Punto de entrada de la aplicación. Inicia el servidor, los hilos de
+     * control y el bucle de escucha de vehículos.
+     *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
@@ -44,14 +49,14 @@ public class ServidorITV {
             System.out.println("Servidor ITV del Infierno arrancando...");
             while (true) {
                 Socket s = ss.accept();
-                
+
                 // Una vez existe una conexión el servidor le asigna un nombre
                 contadorVehiculos++;
                 nombreVehiculo = String.format("Coche%d", contadorVehiculos);
 
                 // Se genera el ticket de inspección pasando como argumento el objeto Socket y el String nombre del vehículo
                 ti = new TicketInspeccion(s, nombreVehiculo);
-                
+
                 // Si existe una línea de inspección libre el hilo coche será atendido directamente por un hilo inspector en caso contrario esperará su turno
                 if (rcITVinfierno.getLineasEnUso() < RecursoCompartidoITV.NUM_LINEAS) {
                     rcITVinfierno.atenderVehiculo(ti);
