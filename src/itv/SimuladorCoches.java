@@ -51,6 +51,9 @@ public class SimuladorCoches {
 
         } while (numVehiculos != 0);
 
+        System.out.println(String.format("Itv's superadas: %d",HiloCoche.getPruebasSuperadas()));
+        System.out.println(String.format("Itv's no superadas: %d",HiloCoche.getPruebasNoSuperadas()));
+        
         // Cierre de recursos
         teclado.close();
 

@@ -21,6 +21,9 @@ public class RecursoCompartidoITV {
     public static int codigoTurno=1;
     // Lista de espera de los vehículos que esperan su turno para ser atendidos cuando exista alguna línea de inspección disponible
     public final LinkedList<TicketInspeccion> LISTA_ESPERA = new LinkedList<>();
+    // Ticket de inspección
+    private TicketInspeccion ticket;
+    
 
     // Método sincronizado para solicitar la entrada de un nuevo vehículo en la línea de inspección por parte del hilo inspector
     public synchronized TicketInspeccion solicitarVehiculo() throws InterruptedException {
@@ -29,30 +32,34 @@ public class RecursoCompartidoITV {
             wait();
         }
 
+        ticket=LISTA_ESPERA.pollFirst();
+        
+        // El hilo inspector recepciona directamente el vehículo
+        System.out.println(String.format("%s entra en la ITV.", ticket.getNombreVehiculo()));
+        
         // Si la lista no está vacía se ocupa una línea y el primer vehículo en entrar será el primero en salir, empleando para ello el método poll() de la clase LinkedList
         entradaVehiculo();
-        return LISTA_ESPERA.pollFirst();
+        
+        return ticket;
+        
 
     }
 
     // Método sincronizado que atiende un vehiculo a su llegada si existe alguna línea de inspección libre (avisan a los hilos inspectores que se encuentren esperando)
-    public synchronized void atenderVehiculo(TicketInspeccion ti) {
+    public synchronized void atenderVehiculo(TicketInspeccion ticket) {
         // Se almacena el ticket de inspección del coche una lista de espera momentaneamente
-        LISTA_ESPERA.offer(ti);
+        LISTA_ESPERA.offer(ticket);
         // Se avisa a los inspectores que se encuentren esperando porque la lista de espera estaba vacía
         notifyAll();
-
-        // El hiilo inspector recepciona directamente el vehículo
-        System.out.println(String.format("%s entra en la ITV.", ti.getNombreVehiculo()));
 
     }
 
     // Método sincronizado para almacenar en una lista de espera los vehículos pendientes de ser atendidos
-    public synchronized void esperarTurno(TicketInspeccion ti) {
+    public synchronized void esperarTurno(TicketInspeccion ticket) {
         // El Socket del coche que espera es almacenado en una lista de espera
-        LISTA_ESPERA.offer(ti);
+        LISTA_ESPERA.offer(ticket);
         // Se imprime en consola el nombre del coche que se encuentra esperando
-        System.out.println(String.format("%s esperando para entrar.", ti.getNombreVehiculo()));
+        System.out.println(String.format("%s esperando para entrar.", ticket.getNombreVehiculo()));
         // El hilo coche notifica a los hilos inspectores que se encuentra en la sala de espera esperando su turno para ser atendido
         notifyAll();
     }

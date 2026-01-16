@@ -22,6 +22,32 @@ public class HiloCoche implements Runnable {
     private static final int PUERTO = 12349;
     private String nombreVehiculo;
     private String codigoTurno;
+    
+    // Declaración/iniciación de las variables que almacenan el número de pruebas superadas y no superadas
+    private static int pruebasSuperadas=0;
+    private static int pruebasNoSuperadas=0;
+
+    // Métodos que recuentan las pruebas superadas
+    public synchronized void incrementarPruebasSuperadas() {
+        pruebasSuperadas++;
+    }
+    
+    // Métodos que recuentan las pruebas no superadas
+    public synchronized void incrementarPruebasNoSuperadas() {
+        pruebasNoSuperadas++;
+    }
+
+    // Método getter que devuelven el número de pruebas superadas
+    public static int getPruebasSuperadas() {
+        return pruebasSuperadas;
+    }
+    
+    // Método getter que devuelven el número de pruebas no superadas
+    public static int getPruebasNoSuperadas() {
+        return pruebasNoSuperadas;
+    }
+    
+    
     private static final String[] frasesInadecuadas = {
         "ok jefe",
         "lo que tú digas",
@@ -85,21 +111,22 @@ public class HiloCoche implements Runnable {
             this.nombreVehiculo=br.readLine();
 //RECIBIDO 2: Se recibe mensaje del hilo inspector
             this.codigoTurno=br.readLine();
-            System.out.println(String.format("Mi nuevo nombre es: %s y tiene asignado el turno nº %s", this.nombreVehiculo,this.codigoTurno));
+            //System.out.println(String.format("Mi nuevo nombre es: %s y tiene asignado el turno nº %s", this.nombreVehiculo,this.codigoTurno));
 //RECIBIDO 3: Se recibe mensaje del hilo inspector
             // El vehículo recibe el saludo de bienvenida del hilo inspector
             mensajeIn = br.readLine();
-            System.out.println(String.format("Saludo del inspector al %s: %s", this.nombreVehiculo, mensajeIn));
+            //System.out.println(String.format("Saludo del inspector al %s: %s", this.nombreVehiculo, mensajeIn));
 //RECIBIDO 4: Se recibe mensaje del hilo inspector   
             // El vehículo recibe el número de pruebas que va a realizar
             numeroPruebas = Integer.parseInt(br.readLine());
-            System.out.println(String.format("Nº pruebas del %s: %d", this.nombreVehiculo,numeroPruebas));
+            //System.out.println(String.format("Nº pruebas del %s: %d", this.nombreVehiculo,numeroPruebas));
             
             // Bucle for para el intercambio de flujo o conversación entre el hilo inspertor y el hilo coche
             for (int i = 0; i < numeroPruebas; i++) {
 //RECIBIDO 5: Se recibe mensaje del hilo inspector          
                 // El hilo coche recibe la petición de cada prueba
-                System.out.println(br.readLine());
+                mensajeIn=br.readLine();
+                //System.out.println(mensajeIn);
                 // El hilo coche responde al inspector con una frase pudiendo ser de las correctas o de las inadecuadas en función de una probabilidad del 70% a favor de las frases correctas
                 probabilidad = (int) (Math.random() * 100);
 //ENVIADO 1: Se envía mensaje al hilo inspector
@@ -112,13 +139,26 @@ public class HiloCoche implements Runnable {
             }
 //RECIBIDO 6: Se recibe mensaje del hilo inspector
             // El hilo coche recibe el mensaje de finalización de las pruebas
-            System.out.println(br.readLine());
+            mensajeIn=br.readLine();
+            //System.out.println(mensajeIn);
           
             // El hilo coche recibe el resultado de las pruebas
-//RECIBIDO 7: Se recibe mensaje del hilo inspector            
-            System.out.println(br.readLine());
-//RECIBIDO 8: Se recibe mensaje del hilo inspector  
-            System.out.println(br.readLine());
+//RECIBIDO 7: Se recibe mensaje del hilo inspector
+            mensajeIn=br.readLine();
+            //System.out.println(br.readLine());
+//RECIBIDO 8: Se recibe mensaje del hilo inspector
+            // El hilo coche actualiza la variable static de la clase que recuenta el número de pruebas superadas y no superadas
+            mensajeIn = br.readLine();
+            if (mensajeIn.equalsIgnoreCase("si")) {
+                //System.out.println(this.nombreVehiculo + " ¿El resultado ha sido apto? --> " + mensajeIn);
+                incrementarPruebasSuperadas();
+            } else {
+                //System.out.println(this.nombreVehiculo + " ¿El resultado ha sido apto? --> " + mensajeIn);
+                incrementarPruebasNoSuperadas();
+            }
+//RECIBIDO 9: Se recibe mensaje del hilo inspector 
+            mensajeIn = br.readLine();
+            //System.out.println(br.readLine());
 
             // Cierre de recursos
             s.close();

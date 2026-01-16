@@ -43,6 +43,10 @@ public class HiloInspector implements Runnable {
         "Tome su pegatina",
         "Debe volver de nuevo"
     };
+    private static final String[] condicional = {
+        "SI",
+        "NO"
+    };
 
     // Método constructor del HiloInspector
     public HiloInspector(RecursoCompartidoITV rcITVinfierno) {
@@ -89,6 +93,7 @@ public class HiloInspector implements Runnable {
         String[] resultados;
         String[] frasesRecibidas;
         int[] puntuaciones;
+        int[] probabilidades;
         TicketInspeccion ti;
 
         // Se implementa un bucle infinito while para que los hilos inspectores no mueran nunca, estación ITV 24/7 operativa.
@@ -97,6 +102,7 @@ public class HiloInspector implements Runnable {
             resultados = new String[pruebas.length];
             frasesRecibidas=new String[pruebas.length];
             puntuaciones=new int[pruebas.length];
+            probabilidades=new int[pruebas.length];
             probabilidad = 60;
             
             try {
@@ -111,6 +117,7 @@ public class HiloInspector implements Runnable {
                 nombreVehiculo = ti.getNombreVehiculo();
                 // Se genera el código de turno para comprobar que el sistema operativo atiendo a cada hilo de manera aleatoria
                 codigoTurno=String.valueOf(RecursoCompartidoITV.codigoTurno++);
+                //System.out.println(String.format("%s entra en la ITV.", nombreVehiculo));
 //ENVIADO 1: Se envía mensaje al hilo coche
                 pw.println(nombreVehiculo);
 //ENVIADO 2: Se envía mensaje al hilo coche
@@ -152,11 +159,13 @@ public class HiloInspector implements Runnable {
                         resultados[i] = resultadoPrueba;
                         frasesRecibidas[i]=mensajeIn;
                         puntuaciones[i]=resultado;
+                        probabilidades[i]=probabilidad;
                     } else {
                         resultadoPrueba = "No";
                         resultados[i] = resultadoPrueba;
                         frasesRecibidas[i]=mensajeIn;
                         puntuaciones[i]=resultado;
+                        probabilidades[i]=probabilidad;
                     }
                 }
 
@@ -168,16 +177,21 @@ public class HiloInspector implements Runnable {
                 // Mensaje de presentación de los resultados obtenidos
 //ENVIADO 7: Se envía mensaje al hilo coche
 //ENVIADO 8: Se envía mensaje al hilo coche
+//ENVIADO 9: Se envía mensaje al hilo coche
                 // Se implementa un bloque condicionar para lanzar uno u otro mensaje dependiendo del resultado obtenido
-                System.out.println(String.format("%s Resultado %s %s","-".repeat(16),nombreVehiculo,"-".repeat(16)));
+                System.out.println(String.format("%n%s Resultado %s %s","-".repeat(14),nombreVehiculo,"-".repeat(14)));
                 if (!comprobarElementoLista("No", resultados)) {
                     mensajeOutConsola=String.format("%s ITV SUPERADA.",nombreVehiculo);
                     pw.println(mensajeOutConsola);
+                    mensajeOut=condicional[0];
+                    pw.println(mensajeOut);
                     mensajeOut=String.format("%s %s",nombreVehiculo,mensajeFinal[0]);
                     pw.println(mensajeOut);
                 } else {
                     mensajeOutConsola=String.format("%s ITV NO SUPERADA.",nombreVehiculo);
                     pw.println(mensajeOutConsola);
+                    mensajeOut=condicional[1];
+                    pw.println(mensajeOut);
                     mensajeOut=String.format("%s %s",nombreVehiculo,mensajeFinal[1]);
                     pw.println(mensajeOut);
                 }
@@ -185,9 +199,10 @@ public class HiloInspector implements Runnable {
                 System.out.println(mensajeOutConsola);
                 // Salida de resultados
                 for (int i = 0; i < pruebas.length; i++) {
-                    System.out.println(String.format("%s: %s (\"%s\" - prob %d%%)", pruebas[i], resultados[i], frasesRecibidas[i], puntuaciones[i]));
+                    System.out.println(String.format("%s: %s (\"%s\" - prob %d%%)", pruebas[i], resultados[i], frasesRecibidas[i], probabilidades[i]));
+                    //System.out.println(String.format("%s: %s (\"%s\" - prob %d%% Resultado=%d)", pruebas[i], resultados[i], frasesRecibidas[i], probabilidades[i],puntuaciones[i]));
                 }
-                System.out.println("-".repeat(50));
+                System.out.println(String.format("%s%n","-".repeat(46)));
 
                 // El hilo inspector libera la línea de inspección para ser reutilizada por un hilo coche que se encuentre esperando su turno
                 rcITV.salidaVehiculo();
