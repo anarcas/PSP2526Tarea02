@@ -109,6 +109,7 @@ public class HiloCoche implements Runnable {
 //RECIBIDO 6            
             // El conductor recibe el resultado de las pruebas
             System.out.println(br.readLine());
+            System.out.println(br.readLine());
 
             // Cierre de recursos
             s.close();

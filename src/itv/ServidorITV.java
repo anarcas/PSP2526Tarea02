@@ -34,6 +34,8 @@ public class ServidorITV {
         // El servidor establecerá el nombre del coche
         String nombreCoche;
         int contadorCoches = 0;
+        int contadorTurnos=0;
+        String codigoTurno=null;
 
         // Se crean tantos hilos inspectores como líneas disponga la estación ITV
         for (int i = 0; i < RecursoCompartidoITV.NUM_LINEAS; i++) {
@@ -50,8 +52,9 @@ public class ServidorITV {
                 contadorCoches++;
                 nombreCoche = String.format("Coche%d", contadorCoches);
 
+                codigoTurno=String.format("#-%s",String.valueOf(contadorCoches));
                 // Se genera el ticket de inspección
-                ti = new TicketInspeccion(s, nombreCoche);
+                ti = new TicketInspeccion(s, nombreCoche,codigoTurno);
 
                 // Si existe una línea de inspección libre el hilo coche será atendido directamente por un hilo inspector en caso contrario esperará su turno
                 if (rcITVinfierno.getLineasEnUso() < 4) {

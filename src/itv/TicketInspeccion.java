@@ -11,18 +11,17 @@ import java.net.Socket;
  * @author anaranjo
  */
 public class TicketInspeccion {
+
     private Socket socket;
     private String nombreVehiculo;
+    private String codigoTurno;
 
-    
-    
-
-    public TicketInspeccion(Socket s, String nombre) {
+    public TicketInspeccion(Socket s, String nombre, String numTurno) {
         this.socket = s;
         this.nombreVehiculo = nombre;
+        this.codigoTurno = numTurno;
     }
-    
-    
+
     public Socket getSocket() {
         return socket;
     }
@@ -37,5 +36,13 @@ public class TicketInspeccion {
 
     public void setNombreVehiculo(String nombreVehiculo) {
         this.nombreVehiculo = nombreVehiculo;
+    }
+
+    public String getCodigoTurno() {
+        return codigoTurno;
+    }
+
+    public void setCodigoTurno(String codigo) {
+        this.codigoTurno = codigo;
     }
 }

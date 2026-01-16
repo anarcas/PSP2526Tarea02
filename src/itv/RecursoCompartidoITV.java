@@ -16,7 +16,7 @@ public class RecursoCompartidoITV {
     // Declaración/iniciación de variables
     public static final int NUM_LINEAS = 4;
     private int lineaEnUso = 0;
-    private final String MENSAJE_CIERRE = "Cerrado";
+    private static String codigoTurno;
     // Lista de espera de los vehículos que esperan su turno para ser atendidos cuando exista alguna línea de inspección disponible
     public final LinkedList<TicketInspeccion> listaEspera = new LinkedList<>();
 
@@ -29,7 +29,7 @@ public class RecursoCompartidoITV {
 
         // Si la lista no está vacía se ocupa una línea y el primer vehículo en entrar será el primero en salir, empleando para ello el método poll() de la clase LinkedList
         entradaVehiculo();
-        return listaEspera.poll();
+        return listaEspera.pollFirst();
 
     }
 
@@ -49,7 +49,7 @@ public class RecursoCompartidoITV {
         // Se imprime en consola el nombre del coche que se encuentra esperando
         System.out.println(String.format("%s esperando para entrar.", ti.getNombreVehiculo()));
         // El hilo coche notifica a los hilos inspectores que se encuentra en la sala de espera esperando su turno para ser atendido
-        notifyAll();
+        notify();
     }
 
     // Método getter que devuelve el número de líneas en uso
@@ -67,10 +67,4 @@ public class RecursoCompartidoITV {
         lineaEnUso--;
     }
     
-    // Método que devuelve si la ITV debe cerrarse para mandar a los hilos inspectores a casa tras el día de trabajo
-    public boolean cerrarEstacion(){
-   
-        return false;
-
-    }
 }

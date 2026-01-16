@@ -61,6 +61,7 @@ public class HiloInspector implements Runnable {
     // Método para comprobar si un elemento se encuentra almacenado en una lista
     private boolean comprobarElementoLista(String elemento, String[] frases) {
 
+        // Se usa el método equalsIgnoreCase() dentro de un bucle for para no distinguir entre mayúsculas y minúsculas
         for (String frase : frases) {
             if (frase.equalsIgnoreCase(elemento)) {
                 return true;
@@ -73,6 +74,7 @@ public class HiloInspector implements Runnable {
     public void run() {
 
         String nombreVehiculo;
+        String codigoTurno;
         String mensajeOut;
         String mensajeIn;
         String numeroPruebas;
@@ -97,8 +99,9 @@ public class HiloInspector implements Runnable {
 
                 // El inspector envía el nombre del vehículo para que éste pueda renombrarse
                 nombreVehiculo = ti.getNombreVehiculo();
+                codigoTurno=ti.getCodigoTurno();
 //ENVIADO 1
-                pw.println(nombreVehiculo);
+                pw.println(nombreVehiculo+" - "+codigoTurno);
 
                 // El inspector recepciona el vehículo
                 System.out.println(String.format("%s entra en la ITV.", nombreVehiculo));
@@ -141,8 +144,10 @@ public class HiloInspector implements Runnable {
                 // Mensaje de presentación de resultados de la prueba
                 if (!comprobarElementoLista("No", resultados)) {
                     pw.println("Prueba superada" + nombreVehiculo);
+                    pw.println(mensajeFinal[0]);
                 } else {
                     pw.println("Prueba no superada" + nombreVehiculo);
+                    pw.println(nombreVehiculo+" "+mensajeFinal[1]);
                 }
 
                 // Se libera una línea de inspección
