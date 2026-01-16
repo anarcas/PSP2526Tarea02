@@ -4,9 +4,8 @@
  */
 package itv;
 
-import java.net.Socket;
+
 import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  *
@@ -17,9 +16,9 @@ public class RecursoCompartidoITV {
     // Declaración/iniciación de variables
     public static final int NUM_LINEAS = 4;
     private int lineaEnUso = 0;
+    private final String MENSAJE_CIERRE = "Cerrado";
     // Lista de espera de los vehículos que esperan su turno para ser atendidos cuando exista alguna línea de inspección disponible
     public final LinkedList<TicketInspeccion> listaEspera = new LinkedList<>();
-    private TicketInspeccion ti;
 
     // Método para solicitar la entrada de un nuevo vehículo en la línea de inspección por parte del hilo inspector
     public synchronized TicketInspeccion solicitarVehiculo() throws InterruptedException {
@@ -66,5 +65,12 @@ public class RecursoCompartidoITV {
     // Método para dar salida a un vehículo tras ser inspeccionado y notifica al siguiente que se encuentre esperando
     public synchronized void salidaVehiculo() {
         lineaEnUso--;
+    }
+    
+    // Método que devuelve si la ITV debe cerrarse para mandar a los hilos inspectores a casa tras el día de trabajo
+    public boolean cerrarEstacion(){
+   
+        return false;
+
     }
 }

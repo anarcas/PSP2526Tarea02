@@ -23,7 +23,6 @@ public class SimuladorCoches {
         Scanner teclado;
         int numVehiculos;
         Thread hiloCoche;
-        String nombreCoche;
         Thread[] hilosCoche;
 
         // Se implementa un bucle do-while que se ejecutará al menos una vez y siempre y cuando la variable de entrada por parte del usuario de la aplicación sea distinta de 0
@@ -37,8 +36,7 @@ public class SimuladorCoches {
 
             // Se implementa un bucle for para iniciar tantos hilos coche como indique el usuario
             for (int i = 0; i < numVehiculos; i++) {
-                nombreCoche = String.format("Coche%d", i + 1);
-                hiloCoche = new Thread(new HiloCoche(nombreCoche), nombreCoche);
+                hiloCoche = new Thread(new HiloCoche());
                 hilosCoche[i]=hiloCoche;
                 hiloCoche.start();
             }

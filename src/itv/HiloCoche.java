@@ -42,11 +42,10 @@ public class HiloCoche implements Runnable {
         "ok",
         "de acuerdo"
     };
-    private static final String MENSAJE_DESPEDIDA="FIN";
 
     // Método constructor del HiloCoche (HiloCliente)
-    public HiloCoche(String nombreCoche) {
-        this.nombreVehiculo = nombreCoche;
+    public HiloCoche() {
+        this.nombreVehiculo = null;
     }
 
     // Método selector de frase aleatoria
@@ -76,38 +75,38 @@ public class HiloCoche implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
             PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
 
-//R1
+//RECIBIDO 1
             // El vehículo recibe su nuevo nombre
             this.nombreVehiculo=br.readLine();
-            System.out.println("mi nuevo nombre: "+this.nombreVehiculo);
-//R2   
+            System.out.println("Mi nuevo nombre: "+this.nombreVehiculo);
+//RECIBIDO 2  
             // El vehículo recibe el saludo de bienvenida del servidor
             linea = br.readLine();
             System.out.println("Saludo: "+linea);
-//R3            
+//RECIBIDO 3         
             // El vehículo recibe el número de pruebas que va a realizar
             numeroPruebas = Integer.parseInt(br.readLine());
             System.out.println("núm pruebas: "+numeroPruebas);
             
             // Bucle for para el intercambio de flujo entre inspertor y conductor
             for (int i = 0; i < numeroPruebas; i++) {
-//R4                
+//RECIBIDO 4                
                 // El conductor recibe la petición de cada prueba
                 linea = br.readLine();
                 System.out.println(linea);
                 // El conductor responde al inspector
                 probabilidad = (int) (Math.random() * 100);
-//E1                
+//ENVIADO 1               
                 if (probabilidad < 70) {
                     pw.println(selectorFrases(frasesCorrectas));
                 } else {
                     pw.println(selectorFrases(frasesInadecuadas));
                 }
             }
-//R5
+//RECIBIDO 5
             // El conductor recibe el mensaje de terminación de las pruebas
             System.out.println(br.readLine());
-//R6            
+//RECIBIDO 6            
             // El conductor recibe el resultado de las pruebas
             System.out.println(br.readLine());
 
