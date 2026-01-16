@@ -36,7 +36,7 @@ public class ServidorITV {
         String nombreVehiculo;
         int contadorVehiculos = 0;
 
-        // Se crean tantos hilos inspectores como líneas disponga la estación ITV
+        // Se crea un hilo inspector por cada línea disponible, solo y exclusivamente para que la CPU trabaje de la manera más eficiente posible
         for (int i = 0; i < RecursoCompartidoITV.NUM_LINEAS; i++) {
             hiloInspector = new Thread(new HiloInspector(rcITVinfierno));
             hiloInspector.start();

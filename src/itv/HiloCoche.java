@@ -80,29 +80,29 @@ public class HiloCoche implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
             PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
 
-//RECIBIDO 1
+//RECIBIDO 1: Se recibe mensaje del hilo inspector
             // El vehículo recibe su nuevo nombre
             this.nombreVehiculo=br.readLine();
-//RECIBIDO 2
+//RECIBIDO 2: Se recibe mensaje del hilo inspector
             this.codigoTurno=br.readLine();
             System.out.println(String.format("Mi nuevo nombre es: %s y tiene asignado el turno nº %s", this.nombreVehiculo,this.codigoTurno));
-//RECIBIDO 3  
+//RECIBIDO 3: Se recibe mensaje del hilo inspector
             // El vehículo recibe el saludo de bienvenida del hilo inspector
             mensajeIn = br.readLine();
             System.out.println(String.format("Saludo del inspector al %s: %s", this.nombreVehiculo, mensajeIn));
-//RECIBIDO 4         
+//RECIBIDO 4: Se recibe mensaje del hilo inspector   
             // El vehículo recibe el número de pruebas que va a realizar
             numeroPruebas = Integer.parseInt(br.readLine());
             System.out.println(String.format("Nº pruebas del %s: %d", this.nombreVehiculo,numeroPruebas));
             
             // Bucle for para el intercambio de flujo o conversación entre el hilo inspertor y el hilo coche
             for (int i = 0; i < numeroPruebas; i++) {
-//RECIBIDO 5                
+//RECIBIDO 5: Se recibe mensaje del hilo inspector          
                 // El hilo coche recibe la petición de cada prueba
                 System.out.println(br.readLine());
                 // El hilo coche responde al inspector con una frase pudiendo ser de las correctas o de las inadecuadas en función de una probabilidad del 70% a favor de las frases correctas
                 probabilidad = (int) (Math.random() * 100);
-//ENVIADO 1         
+//ENVIADO 1: Se envía mensaje al hilo inspector
                 // Se implementa un bloque condicional para decidir qué frase tipo de frase seleccionar de manera aleatoria y con una probabilidad del 70% para las frases correctas.
                 if (probabilidad < 70) {
                     pw.println(selectorFrases(frasesCorrectas));
@@ -110,12 +110,14 @@ public class HiloCoche implements Runnable {
                     pw.println(selectorFrases(frasesInadecuadas));
                 }
             }
-//RECIBIDO 6
+//RECIBIDO 6: Se recibe mensaje del hilo inspector
             // El hilo coche recibe el mensaje de finalización de las pruebas
             System.out.println(br.readLine());
-//RECIBIDO 7            
+          
             // El hilo coche recibe el resultado de las pruebas
+//RECIBIDO 7: Se recibe mensaje del hilo inspector            
             System.out.println(br.readLine());
+//RECIBIDO 8: Se recibe mensaje del hilo inspector  
             System.out.println(br.readLine());
 
             // Cierre de recursos

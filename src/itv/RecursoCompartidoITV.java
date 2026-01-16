@@ -42,6 +42,9 @@ public class RecursoCompartidoITV {
         // Se avisa a los inspectores que se encuentren esperando porque la lista de espera estaba vacía
         notifyAll();
 
+        // El hiilo inspector recepciona directamente el vehículo
+        System.out.println(String.format("%s entra en la ITV.", ti.getNombreVehiculo()));
+
     }
 
     // Método sincronizado para almacenar en una lista de espera los vehículos pendientes de ser atendidos
