@@ -1,4 +1,4 @@
- /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
@@ -18,7 +18,6 @@ import java.net.Socket;
 public class ServidorITV {
 
     private static final int PUERTO = 12349;
-    private static final int NUM_LINEAS = 4;
 
     /**
      * @param args the command line arguments
@@ -30,11 +29,14 @@ public class ServidorITV {
         Thread hiloInspector;
         // Recurso compartido
         RecursoCompartidoITV rcITVinfierno = new RecursoCompartidoITV();
-        // Mensaje recibido por parte del hilo coche que establece la conexión
+        // Ticket de recepción
+        TicketInspeccion ti;
+        // El servidor establecerá el nombre del coche
         String nombreCoche;
+        int contadorCoches = 0;
 
         // Se crean tantos hilos inspectores como líneas disponga la estación ITV
-        for (int i = 0; i < NUM_LINEAS; i++) {
+        for (int i = 0; i < RecursoCompartidoITV.NUM_LINEAS; i++) {
             hiloInspector = new Thread(new HiloInspector(rcITVinfierno));
             hiloInspector.start();
         }
@@ -44,14 +46,20 @@ public class ServidorITV {
             System.out.println("Servidor ITV del Infierno arrancando...");
             while (true) {
                 Socket s = ss.accept();
-                // El hilo coche le envía su nombre al servidor principal
-                // Se generan los flujos de entrada y salida, comunicación servidor-cliente (hilo servidor principal - hilo coche)
-                BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
-                nombreCoche=br.readLine();
-                
-                // Se almacena en la lista de espera cada hilo coche que llegue a la estación ITV
-                rcITVinfierno.esperarTurno(s,nombreCoche);
+                // Una vez existe una conexión el servidor le asigna un nombre
+                contadorCoches++;
+                nombreCoche = String.format("Coche%d", contadorCoches);
+
+                // Se genera el ticket de inspección
+                ti = new TicketInspeccion(s, nombreCoche);
+
+                // Si existe una línea de inspección libre el hilo coche será atendido directamente por un hilo inspector en caso contrario esperará su turno
+                if (rcITVinfierno.getLineasEnUso() < 4) {
+                    rcITVinfierno.atenderVehiculo(ti);
+                } else {
+                    // Si todas las lineas estan ocupadas entonces se almacena cada conexión que llegue a la estación ITV en la lista de espera 
+                    rcITVinfierno.esperarTurno(ti);
+                }
             }
         } catch (IOException e) {
             System.err.println("Error en el servidor E/S: " + e.getMessage());

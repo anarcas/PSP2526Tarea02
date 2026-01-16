@@ -19,7 +19,7 @@ public class HiloCoche implements Runnable {
     // Declaración/iniciación de variables
     private static final String HOST = "localhost";
     private static final int PUERTO = 12349;
-    private final String nombreVehiculo;
+    private String nombreVehiculo;
     private static final String[] frasesInadecuadas = {
         "ok jefe",
         "lo que tú digas",
@@ -76,37 +76,40 @@ public class HiloCoche implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
             PrintWriter pw = new PrintWriter(s.getOutputStream(), true);
 
-            // El vehículo le pasa su nombre al servidor principal
-            pw.println(this.nombreVehiculo);
-            
-            // Una vez establecida la conexión con el hilo inspector el hilo coche le vuelve a pasar su nombre
-            //pw.println(this.nombreVehiculo);
-            
+//R1
+            // El vehículo recibe su nuevo nombre
+            this.nombreVehiculo=br.readLine();
+            System.out.println("mi nuevo nombre: "+this.nombreVehiculo);
+//R2   
             // El vehículo recibe el saludo de bienvenida del servidor
             linea = br.readLine();
-            System.out.println(linea);
+            System.out.println("Saludo: "+linea);
+//R3            
             // El vehículo recibe el número de pruebas que va a realizar
             numeroPruebas = Integer.parseInt(br.readLine());
+            System.out.println("núm pruebas: "+numeroPruebas);
+            
             // Bucle for para el intercambio de flujo entre inspertor y conductor
             for (int i = 0; i < numeroPruebas; i++) {
+//R4                
                 // El conductor recibe la petición de cada prueba
                 linea = br.readLine();
                 System.out.println(linea);
                 // El conductor responde al inspector
-                probabilidad = (int) Math.random() * 100;
+                probabilidad = (int) (Math.random() * 100);
+//E1                
                 if (probabilidad < 70) {
                     pw.println(selectorFrases(frasesCorrectas));
                 } else {
                     pw.println(selectorFrases(frasesInadecuadas));
                 }
             }
-
+//R5
             // El conductor recibe el mensaje de terminación de las pruebas
             System.out.println(br.readLine());
+//R6            
             // El conductor recibe el resultado de las pruebas
             System.out.println(br.readLine());
-            // El conductor avisa al inspector que se marcha
-            pw.println(MENSAJE_DESPEDIDA);
 
             // Cierre de recursos
             s.close();

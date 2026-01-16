@@ -39,14 +39,15 @@ public class SimuladorCoches {
             for (int i = 0; i < numVehiculos; i++) {
                 nombreCoche = String.format("Coche%d", i + 1);
                 hiloCoche = new Thread(new HiloCoche(nombreCoche), nombreCoche);
+                hilosCoche[i]=hiloCoche;
                 hiloCoche.start();
             }
 
             // Los hilos se esperan antes de finalizar la simulación de los hilos coches
             for (Thread hilo : hilosCoche) {
-                if (hilo != null) {
+
                     hilo.join();
-                }
+     
             }
 
         } while (numVehiculos != 0);
