@@ -12,8 +12,9 @@ import java.net.Socket;
 import java.net.SocketException;
 
 /**
- *
- * @author anaranjo
+ * Clase Hilo Inspector
+ * 
+ * @author Antonio Naranjo Castillo
  */
 public class HiloInspector implements Runnable {
 
@@ -70,9 +71,11 @@ public class HiloInspector implements Runnable {
         return false;
     }
 
+    // Método run del HiloInspector
     @Override
     public void run() {
 
+        // Declaración de variables
         String nombreVehiculo;
         String codigoTurno;
         String mensajeOut;
@@ -80,54 +83,68 @@ public class HiloInspector implements Runnable {
         String numeroPruebas;
         long tiempoPrueba;
         int probabilidad;
+        int resultado;
         String resultadoPrueba;
         String[] resultados;
         TicketInspeccion ti;
 
-        // Se implementa un bucle infinito while para que los hilos inspectores no mueran nunca.
+        // Se implementa un bucle infinito while para que los hilos inspectores no mueran nunca, estación ITV 24/7 operativa.
         while (true) {
             // Se inician/instancian las variables
             resultados = new String[pruebas.length];
             probabilidad = 60;
+            
             try {
-                // El hilo inspector solicita la entrada de un vehículo en la línea de inspección
+                // El hilo inspector solicita la entrada de un vehículo en la línea de inspección (solicita el ticket de inspección)
                 ti = rcITV.solicitarVehiculo();
 
-                // Se generan los flujos de entrada y salida, comunicación servidor-cliente (hilo inspector - hilo coche)
+                // Se generan los flujos de entrada y salida del hilo inspector, comunicación servidor-cliente (hilo inspector - hilo coche)
                 BufferedReader br = new BufferedReader(new InputStreamReader(ti.getSocket().getInputStream()));
                 PrintWriter pw = new PrintWriter(ti.getSocket().getOutputStream(), true);
 
                 // El inspector envía el nombre del vehículo para que éste pueda renombrarse
                 nombreVehiculo = ti.getNombreVehiculo();
-                codigoTurno=ti.getCodigoTurno();
-//ENVIADO 1
-                pw.println(nombreVehiculo+" - "+codigoTurno);
+                // Se genera el código de turno para comprobar que el sistema operativo atiendo a cada hilo de manera aleatoria
+                codigoTurno=String.valueOf(RecursoCompartidoITV.codigoTurno++);
+//ENVIADO 1: Se envía mensaje al hilo coche
+                pw.println(nombreVehiculo);
+//ENVIADO 2: Se envía mensaje al hilo coche
+                pw.println(codigoTurno);
 
                 // El inspector recepciona el vehículo
                 System.out.println(String.format("%s entra en la ITV.", nombreVehiculo));
                 // El inspector responde con un mensaje de bienvenida
                 mensajeOut = "Buenas tardes, le dejo aquí el walkie‑talkie para darle órdenes";
-//ENVIADO 2
+//ENVIADO 3: Se envía mensaje al hilo coche
                 pw.println(mensajeOut);
+                
+                // El inspector envía al hilo coche el número de pruebas que tienen que realizar
                 numeroPruebas = String.valueOf(pruebas.length);
-//ENVIADO 3
+//ENVIADO 4: Se envía mensaje al hilo coche
                 pw.println(numeroPruebas);
 
-                // Pruebas
+                // Pruebas: Se implementa un bucle for para atender a cada una de las pruebas
                 for (int i = 0; i < pruebas.length; i++) {
+                    // Se asigna un tiempo aleatorio entre 1 y 5 segundos para simular el tiempo de ejecución de cada tarea
                     tiempoPrueba = (long) ((Math.random() * 5 + 1) * 1000);
+                    // Se duerme el hilo inspector el tiempo asignado a cada tarea
                     Thread.sleep(tiempoPrueba);
-                    mensajeOut = String.format("%s Realice la prueba: %s", nombreVehiculo, pruebas[i]);
-                    // ENVIADO 4
+                    // El hilo inspector le envía al hilo coche el la prueba a realizar
+                    mensajeOut = String.format("%s realice la prueba: %s", nombreVehiculo, pruebas[i]);
+// ENVIADO 5: Se envía mensaje al hilo coche
                     pw.println(mensajeOut);
+                    
                     // El inspector recibe la mensajeOut del cliente y comprueba si se trata de una frase inadecuada
-//RECIBIDO 1
+//RECIBIDO 1: Se recibe mensaje del hilo coche
                     mensajeIn = br.readLine();
                     System.out.println(String.format("Frase del %s: %s",nombreVehiculo, mensajeIn));
+                    // Se implementa un bloque condicional para bajar la probabilidad de éxito para superar la prueba en caso de recibir una de las frases inadecuadas
                     if (comprobarElementoLista(mensajeIn, frasesInadecuadas)) {
                         probabilidad -= 10;
                     }
-                    if ((int) (Math.random() * 100) < probabilidad) {
+                    // Se implementa un bloque condicional para calcular el resultado de la prueba y comparar con la probabilidad de éxito
+                    resultado = (int) (Math.random() * 100);
+                    if (resultado < probabilidad) {
                         resultadoPrueba = "Si";
                         resultados[i] = resultadoPrueba;
                     } else {
@@ -136,22 +153,25 @@ public class HiloInspector implements Runnable {
                     }
                 }
 
-                // Mensaje de despedida
+                // Una vez finalizadas las pruebas y calculado el resultado el hilo inspector lanza un mensaje de finalización
                 mensajeOut = "Le retiro el walkie, esperé en la puerta. Gracias.";
-//ENVIADO 5
+//ENVIADO 6: Se envía mensaje al hilo coche
                 pw.println(mensajeOut);
-//ENVIADO 6
-                // Mensaje de presentación de resultados de la prueba
+                
+                // Mensaje de presentación de los resultados obtenidos
+//ENVIADO 7: Se envía mensaje al hilo coche
+                // Se implementa un bloque condicionar para lanzar uno u otro mensaje dependiendo del resultado obtenido
                 if (!comprobarElementoLista("No", resultados)) {
-                    pw.println("Prueba superada" + nombreVehiculo);
-                    pw.println(mensajeFinal[0]);
+                    pw.println("Prueba superada " + nombreVehiculo);
+                    pw.println(nombreVehiculo+" "+mensajeFinal[0]);
                 } else {
-                    pw.println("Prueba no superada" + nombreVehiculo);
+                    pw.println("Prueba no superada " + nombreVehiculo);
                     pw.println(nombreVehiculo+" "+mensajeFinal[1]);
                 }
 
-                // Se libera una línea de inspección
+                // El hilo inspector libera la línea de inspección para ser reutilizada por un hilo coche que se encuentre esperando su turno
                 rcITV.salidaVehiculo();
+                
                 // Cierre de recursos
                 ti.getSocket().close();
                 br.close();

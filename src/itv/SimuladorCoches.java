@@ -7,8 +7,9 @@ package itv;
 import java.util.Scanner;
 
 /**
- *
- * @author anaranjo
+ * Clase simulador de hilos coche
+ * 
+ * @author Antonio Naranjo Castillo
  */
 public class SimuladorCoches {
 

@@ -11,8 +11,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
- *
- * @author anaranjo
+ * Clase Hilo Coche
+ * 
+ * @author Antonio Naranjo Castillo
  */
 public class HiloCoche implements Runnable {
 
@@ -20,6 +21,7 @@ public class HiloCoche implements Runnable {
     private static final String HOST = "localhost";
     private static final int PUERTO = 12349;
     private String nombreVehiculo;
+    private String codigoTurno;
     private static final String[] frasesInadecuadas = {
         "ok jefe",
         "lo que tú digas",
@@ -43,9 +45,10 @@ public class HiloCoche implements Runnable {
         "de acuerdo"
     };
 
-    // Método constructor del HiloCoche (HiloCliente)
+    // Método constructor del HiloCoche (HiloCliente) El nombre será asignado a posteriori por parte del servidor principal
     public HiloCoche() {
         this.nombreVehiculo = null;
+        this.codigoTurno=null;
     }
 
     // Método selector de frase aleatoria
@@ -66,10 +69,12 @@ public class HiloCoche implements Runnable {
     @Override
     public void run() {
 
-        String linea;
+        // Declaración de variables
+        String mensajeIn;
         int numeroPruebas;
         int probabilidad;
 
+        // Se generan los flujos de entrada y salida del hilo coche, comunicación servidor-cliente (hilo inspector - hilo coche)
         try {
             Socket s = new Socket(HOST, PUERTO);
             BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -78,36 +83,38 @@ public class HiloCoche implements Runnable {
 //RECIBIDO 1
             // El vehículo recibe su nuevo nombre
             this.nombreVehiculo=br.readLine();
-            System.out.println("Mi nuevo nombre: "+this.nombreVehiculo);
-//RECIBIDO 2  
-            // El vehículo recibe el saludo de bienvenida del servidor
-            linea = br.readLine();
-            System.out.println("Saludo: "+linea);
-//RECIBIDO 3         
+//RECIBIDO 2
+            this.codigoTurno=br.readLine();
+            System.out.println(String.format("Mi nuevo nombre es: %s y tiene asignado el turno nº %s", this.nombreVehiculo,this.codigoTurno));
+//RECIBIDO 3  
+            // El vehículo recibe el saludo de bienvenida del hilo inspector
+            mensajeIn = br.readLine();
+            System.out.println(String.format("Saludo del inspector al %s: %s", this.nombreVehiculo, mensajeIn));
+//RECIBIDO 4         
             // El vehículo recibe el número de pruebas que va a realizar
             numeroPruebas = Integer.parseInt(br.readLine());
-            System.out.println("núm pruebas: "+numeroPruebas);
+            System.out.println(String.format("Nº pruebas del %s: %d", this.nombreVehiculo,numeroPruebas));
             
-            // Bucle for para el intercambio de flujo entre inspertor y conductor
+            // Bucle for para el intercambio de flujo o conversación entre el hilo inspertor y el hilo coche
             for (int i = 0; i < numeroPruebas; i++) {
-//RECIBIDO 4                
-                // El conductor recibe la petición de cada prueba
-                linea = br.readLine();
-                System.out.println(linea);
-                // El conductor responde al inspector
+//RECIBIDO 5                
+                // El hilo coche recibe la petición de cada prueba
+                System.out.println(br.readLine());
+                // El hilo coche responde al inspector con una frase pudiendo ser de las correctas o de las inadecuadas en función de una probabilidad del 70% a favor de las frases correctas
                 probabilidad = (int) (Math.random() * 100);
-//ENVIADO 1               
+//ENVIADO 1         
+                // Se implementa un bloque condicional para decidir qué frase tipo de frase seleccionar de manera aleatoria y con una probabilidad del 70% para las frases correctas.
                 if (probabilidad < 70) {
                     pw.println(selectorFrases(frasesCorrectas));
                 } else {
                     pw.println(selectorFrases(frasesInadecuadas));
                 }
             }
-//RECIBIDO 5
-            // El conductor recibe el mensaje de terminación de las pruebas
+//RECIBIDO 6
+            // El hilo coche recibe el mensaje de finalización de las pruebas
             System.out.println(br.readLine());
-//RECIBIDO 6            
-            // El conductor recibe el resultado de las pruebas
+//RECIBIDO 7            
+            // El hilo coche recibe el resultado de las pruebas
             System.out.println(br.readLine());
             System.out.println(br.readLine());
 

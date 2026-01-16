@@ -12,8 +12,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- *
- * @author anaranjo
+ * Clase ServidorITV (Servidor principal de la estación ITV)
+ * 
+ * @author Antonio Naranjo Castillo
  */
 public class ServidorITV {
 
@@ -32,10 +33,8 @@ public class ServidorITV {
         // Ticket de recepción
         TicketInspeccion ti;
         // El servidor establecerá el nombre del coche
-        String nombreCoche;
-        int contadorCoches = 0;
-        int contadorTurnos=0;
-        String codigoTurno=null;
+        String nombreVehiculo;
+        int contadorVehiculos = 0;
 
         // Se crean tantos hilos inspectores como líneas disponga la estación ITV
         for (int i = 0; i < RecursoCompartidoITV.NUM_LINEAS; i++) {
@@ -48,16 +47,16 @@ public class ServidorITV {
             System.out.println("Servidor ITV del Infierno arrancando...");
             while (true) {
                 Socket s = ss.accept();
+                
                 // Una vez existe una conexión el servidor le asigna un nombre
-                contadorCoches++;
-                nombreCoche = String.format("Coche%d", contadorCoches);
+                contadorVehiculos++;
+                nombreVehiculo = String.format("Coche%d", contadorVehiculos);
 
-                codigoTurno=String.format("#-%s",String.valueOf(contadorCoches));
-                // Se genera el ticket de inspección
-                ti = new TicketInspeccion(s, nombreCoche,codigoTurno);
-
+                // Se genera el ticket de inspección pasando como argumento el objeto Socket y el String nombre del vehículo
+                ti = new TicketInspeccion(s, nombreVehiculo);
+                
                 // Si existe una línea de inspección libre el hilo coche será atendido directamente por un hilo inspector en caso contrario esperará su turno
-                if (rcITVinfierno.getLineasEnUso() < 4) {
+                if (rcITVinfierno.getLineasEnUso() < RecursoCompartidoITV.NUM_LINEAS) {
                     rcITVinfierno.atenderVehiculo(ti);
                 } else {
                     // Si todas las lineas estan ocupadas entonces se almacena cada conexión que llegue a la estación ITV en la lista de espera 
