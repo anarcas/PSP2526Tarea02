@@ -14,6 +14,9 @@ import java.util.Queue;
  */
 public class RecursoCompartidoITV {
 
+    // Declaración/iniciación de variables
+    public final int NUM_LINEAS=4;
+    private int lineaEnUso = 0;
     // Lista de espera de los vehículos que esperan su turno para ser atendidos cuando exista alguna línea de inspección disponible
     public final Queue<Socket> listaEspera = new LinkedList<>();
     
@@ -42,9 +45,7 @@ public class RecursoCompartidoITV {
     
     
     
-    // Declaración/iniciación de variables
-    public final int NUM_LINEAS=4;
-    private int lineaEnUso = 0;
+    
     
     // Método getter que devuelve el número de líneas en uso
     public int getLineasEnUso() {
